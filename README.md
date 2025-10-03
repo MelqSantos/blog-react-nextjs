@@ -18,7 +18,12 @@ Projeto em desenvolvimento para a pós-graduação em Desenvolvimento Full Stack
 yarn
 ```
 
-2. Inicie o servidor de desenvolvimento:
+2. Necessário rodar o comando:
+```
+$env:PWD = $(Get-Location).Path
+```
+
+3. Inicie o servidor de desenvolvimento:
 
 ```bash
 yarn dev

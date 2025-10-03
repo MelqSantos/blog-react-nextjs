@@ -2,8 +2,9 @@
 import { useState } from 'react'
 import Link from '@/components/Link'
 import siteMetadata from '@/data/siteMetadata'
+import userEndpoints from '@/data/urls'
 
-const initialForm = { email: '', password: '', name: '' }
+const initialForm = { username: '', password: '', role: 'PROFESSOR' }
 
 export default function Login() {
   const [form, setForm] = useState(initialForm)
@@ -21,18 +22,21 @@ export default function Login() {
     setError('')
     try {
       const url = isRegister
-        ? 'http://localhost:8080/user'
-        : 'http://localhost:8080/user/signin'
+        ? userEndpoints.create
+        : userEndpoints.login
       const body = isRegister
-        ? { name: form.name, email: form.email, password: form.password }
-        : { email: form.email, password: form.password }
+        ? { username: form.username, password: form.password, role: form.role }
+        : { username: form.username, password: form.password }
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
       if (!res.ok) throw new Error('Usuário ou senha inválidos')
-      // Aqui você pode salvar o token ou redirecionar
+      const data = await res.json()
+      if (data.token) {
+        localStorage.setItem('token', data.token)
+      }
       alert(isRegister ? 'Cadastro realizado!' : 'Login realizado!')
     } catch (err) {
       setError(err.message)
@@ -54,24 +58,26 @@ export default function Login() {
       <form className="space-y-6" onSubmit={handleSubmit}>
         {isRegister && (
           <div>
-            <label className="block text-gray-700 dark:text-gray-300 mb-1">Nome</label>
-            <input
-              type="text"
-              name="name"
+            <label className="block text-gray-700 dark:text-gray-300 mb-1">Tipo de usuário</label>
+            <select
+              name="role"
               required
-              value={form.name}
+              value={form.role}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-gray-100"
-            />
+            >
+              <option value="PROFESSOR">PROFESSOR</option>
+              <option value="ALUNO">ALUNO</option>
+            </select>
           </div>
         )}
         <div>
-          <label className="block text-gray-700 dark:text-gray-300 mb-1">Email</label>
+          <label className="block text-gray-700 dark:text-gray-300 mb-1">Usuário</label>
           <input
-            type="email"
-            name="email"
+            type="text"
+            name="username"
             required
-            value={form.email}
+            value={form.username}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:text-gray-100"
           />
@@ -100,9 +106,11 @@ export default function Login() {
       </form>
       <div className="mt-6 text-center">
         <button
+          type="button"
           className="text-primary-500 hover:underline"
           onClick={() => {
             setIsRegister(!isRegister)
+            console.log(isRegister)
             setError('')
           }}
         >
@@ -110,11 +118,6 @@ export default function Login() {
             ? 'Já tem uma conta? Faça login'
             : 'Não tem conta? Cadastre-se'}
         </button>
-      </div>
-      <div className="mt-6 text-center">
-        <Link href="/" className="text-gray-500 hover:underline">
-          Voltar para o início
-        </Link>
       </div>
     </div>
   )

@@ -1,8 +1,10 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from '@/components/Link'
 import siteMetadata from '@/data/siteMetadata'
-import userEndpoints from '@/data/urls'
+import { userEndpoints } from 'app/api/urls'
+
 
 const initialForm = { username: '', password: '', role: 'PROFESSOR' }
 
@@ -11,6 +13,7 @@ export default function Login() {
   const [isRegister, setIsRegister] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -37,7 +40,8 @@ export default function Login() {
       if (data.token) {
         localStorage.setItem('token', data.token)
       }
-      alert(isRegister ? 'Cadastro realizado!' : 'Login realizado!')
+      // Redireciona para a home após sucesso
+      router.push('/')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -110,7 +114,6 @@ export default function Login() {
           className="text-primary-500 hover:underline"
           onClick={() => {
             setIsRegister(!isRegister)
-            console.log(isRegister)
             setError('')
           }}
         >

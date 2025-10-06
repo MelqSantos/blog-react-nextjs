@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import Link from '@/components/Link'
-import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { PencilIcon, TrashIcon, PlusIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import EditPostModal from '@/components/Modal'
 import { toast, Toaster } from 'react-hot-toast'
 import ConfirmModal from '@/components/ConfirmModal'
+import Tag from '@/components/Tag'
 
 interface Post {
   id: string

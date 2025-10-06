@@ -60,13 +60,13 @@ const Header = () => {
                 </Link>
               ))}
           </div>
-          <SearchButton />
+          {/* <SearchButton /> */}
           <ThemeSwitch />
           <MobileNav />
           {hasToken ? (
             <span
               onClick={handleLogout}
-              className="ml-4 px-4 py-2 font-medium rounded bg-primary-500 hover:bg-primary-600 dark:hover:bg-primary-400 text-white transition-colors cursor-pointer"
+              className="ml-4 px-4 py-2 hover:text-primary-500 dark:hover:text-primary-400 m-1 font-medium text-gray-900 dark:text-gray-100 cursor-pointer"
               role="button"
               tabIndex={0}
               onKeyPress={(e) => {
@@ -80,7 +80,7 @@ const Header = () => {
               href="/login"
               className="ml-4 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded"
             >
-              Login
+              {/* Login */}
             </Link>
           )}
         </div>

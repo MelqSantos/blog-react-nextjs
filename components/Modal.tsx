@@ -1,3 +1,4 @@
+import { postEndpoints } from 'app/api/urls'
 import { useState } from 'react'
 
 export default function EditPostModal({ post, onClose, onSave }) {
@@ -22,8 +23,8 @@ export default function EditPostModal({ post, onClose, onSave }) {
     try {
       const token = localStorage.getItem('token')
       const url = isNew
-        ? 'http://localhost:8080/posts'
-        : `http://localhost:8080/posts/${post.id}`
+        ?  postEndpoints.create
+        : `${postEndpoints.update}/${post.id}`
       const method = isNew ? 'POST' : 'PUT'
       const res = await fetch(url, {
         method,

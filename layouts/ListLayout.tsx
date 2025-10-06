@@ -8,6 +8,7 @@ import EditPostModal from '@/components/Modal'
 import { toast, Toaster } from 'react-hot-toast'
 import ConfirmModal from '@/components/ConfirmModal'
 import Tag from '@/components/Tag'
+import { postEndpoints } from 'app/api/urls'
 
 interface Post {
   id: string
@@ -102,9 +103,9 @@ export default function ListLayout({ title }: { title: string }) {
       const token = localStorage.getItem('token')
       let url = ''
       if (searchValue) {
-        url = `http://localhost:8080/posts/search/${encodeURIComponent(searchValue)}`
+        url = `${postEndpoints.search}/${encodeURIComponent(searchValue)}`
       } else {
-        url = `http://localhost:8080/posts`
+        url = postEndpoints.list
       }
       const res = await fetch(url, {
         headers: {
@@ -140,14 +141,13 @@ export default function ListLayout({ title }: { title: string }) {
         />
       )}
 
-      {/* CORREÇÃO: Renderização condicional do ConfirmModal */}
       <ConfirmModal
         open={!!confirmId} // Abre se o confirmId estiver setado
         onCancel={() => setConfirmId(null)} // Limpa o estado e fecha o modal
         onConfirm={async () => {
-          // Lógica de exclusão movida para cá
+          // Lógica de exclusão
           const token = localStorage.getItem('token')
-          const res = await fetch(`http://localhost:8080/posts/${confirmId}`, {
+          const res = await fetch(`${postEndpoints.delete}/${confirmId}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
           })
@@ -202,10 +202,10 @@ export default function ListLayout({ title }: { title: string }) {
             <button
               title="Adicionar publicação"
               onClick={handleAdd}
-              className="ml-4 p-2 rounded hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors flex-shrink-0"
+              className="ml-4 p-2 cursor-pointer px-3 py-2 rounded text-primary-500 hover:text-primary-100 bg-transparent hover:bg-primary-600 disabled:opacity-50 flex items-center ml-2"
               style={{ alignSelf: 'stretch', height: '42px' }}
             >
-              <PlusIcon className="h-6 w-6 text-primary-500" />
+              <PlusIcon className="h-6 w-6" />
             </button>
           </div>
         </div>

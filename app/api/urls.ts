@@ -9,5 +9,5 @@ export const postEndpoints = {
     getById: `http://localhost:8080/posts`,
     update: `http://localhost:8080/posts`,
     delete: `http://localhost:8080/posts`,
-    search: `http://localhost:8080/search`,
+    search: `http://localhost:8080/posts/search`,
 }

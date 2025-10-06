@@ -1,9 +1,11 @@
 'use client'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from '@/components/Link'
 import siteMetadata from '@/data/siteMetadata'
 import { userEndpoints } from 'app/api/urls'
+import toast from 'react-hot-toast'
 
 
 const initialForm = { username: '', password: '', role: 'PROFESSOR' }
@@ -30,20 +32,35 @@ export default function Login() {
       const body = isRegister
         ? { username: form.username, password: form.password, role: form.role }
         : { username: form.username, password: form.password }
+      
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      if (!res.ok) throw new Error('Usuário ou senha inválidos')
-      const data = await res.json()
-      if (data.token) {
-        localStorage.setItem('token', data.token)
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        const errorMessage = errorData.message || 'Erro de rede ou credenciais inválidas';
+        throw new Error(errorMessage);
       }
-      // Redireciona para a home após sucesso
-      router.push('/blog')
+      
+      const data = await res.json()
+      
+      if (isRegister) {
+        setForm(initialForm);
+        setIsRegister(false);
+        toast.success('Cadastro realizado com sucesso! Faça login para continuar.')
+      } else {
+        if (data.token) {
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('role', data.role)
+        }
+        router.push('/blog')
+      }
+      
     } catch (err) {
-      setError(err.message)
+      setError(err instanceof Error ? err.message : 'Ocorreu um erro desconhecido.')
     } finally {
       setLoading(false)
     }

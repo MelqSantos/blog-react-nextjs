@@ -62,41 +62,59 @@ export default function ListLayout({ title }: { title: string }) {
   const [showModal, setShowModal] = useState(false)
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const [confirmId, setConfirmId] = useState<string | null>(null)
+  const [userRole, setUserRole] = useState<string | null>(null)
+  
   const POSTS_PER_PAGE = 5
 
-  // CORREÇÃO: A função handleRemove agora apenas define o ID a ser excluído.
-  // O modal será aberto automaticamente pela renderização condicional abaixo.
+  // VARIÁVEL DE CONVENIÊNCIA: Indica se o usuário é professor
+  const isProfessor = userRole === 'PROFESSOR'
+
+  useEffect(() => {
+    const role = localStorage.getItem('role')
+    setUserRole(role)
+    refreshPosts()
+  }, [searchValue])
+
+
   const handleRemove = (id: string) => {
-    setConfirmId(id)
+    if (isProfessor) {
+        setConfirmId(id)
+    } else {
+        toast.error('Você não tem permissão para remover posts.')
+    }
   }
 
-  // Função para abrir modal de edição
   const handleEdit = (post: Post) => {
-    setSelectedPost(post)
-    setShowModal(true)
+    if (isProfessor) {
+        setSelectedPost(post)
+        setShowModal(true)
+    } else {
+        toast.error('Você não tem permissão para editar posts.')
+    }
   }
 
-  // Função para adicionar novo post (abre modal vazio)
   const handleAdd = () => {
-    setSelectedPost({
-      id: '',
-      title: '',
-      content: '',
-      subject: '',
-      createdat: '',
-      updatedat: '',
-      author_id: 1, // ajuste conforme necessário
-    })
-    setShowModal(true)
+    if (isProfessor) { // Condição para adicionar
+        setSelectedPost({
+          id: '',
+          title: '',
+          content: '',
+          subject: '',
+          createdat: '',
+          updatedat: '',
+          author_id: 1,
+        })
+        setShowModal(true)
+    } else {
+        toast.error('Você não tem permissão para adicionar posts.')
+    }
   }
 
-  // Função chamada após salvar (criar ou editar) um post
   const handleSave = (isNew: boolean) => {
     toast.success(isNew ? 'Post criado com sucesso!' : 'Post editado com sucesso!')
     refreshPosts()
   }
 
-  // Função para buscar posts (usada no useEffect e após editar/remover)
   const refreshPosts = async () => {
     setLoading(true)
     try {
@@ -122,10 +140,6 @@ export default function ListLayout({ title }: { title: string }) {
     setLoading(false)
   }
 
-  useEffect(() => {
-    refreshPosts()
-  }, [searchValue])
-
   // Paginação no front-end
   const totalPages = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE))
   const paginatedPosts = allPosts.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE)
@@ -142,10 +156,9 @@ export default function ListLayout({ title }: { title: string }) {
       )}
 
       <ConfirmModal
-        open={!!confirmId} // Abre se o confirmId estiver setado
-        onCancel={() => setConfirmId(null)} // Limpa o estado e fecha o modal
+        open={!!confirmId}
+        onCancel={() => setConfirmId(null)}
         onConfirm={async () => {
-          // Lógica de exclusão
           const token = localStorage.getItem('token')
           const res = await fetch(`${postEndpoints.delete}/${confirmId}`, {
             method: 'DELETE',
@@ -157,7 +170,7 @@ export default function ListLayout({ title }: { title: string }) {
           } else {
             toast.error('Erro ao excluir o post.')
           }
-          setConfirmId(null) // Fecha o modal após a conclusão
+          setConfirmId(null)
         }}
         title="Confirmar Exclusão"
         message="Tem certeza de que deseja excluir este post permanentemente?"
@@ -199,14 +212,17 @@ export default function ListLayout({ title }: { title: string }) {
                 />
               </svg>
             </div>
-            <button
-              title="Adicionar publicação"
-              onClick={handleAdd}
-              className="ml-4 p-2 cursor-pointer px-3 py-2 rounded text-primary-500 hover:text-primary-100 bg-transparent hover:bg-primary-600 disabled:opacity-50 flex items-center ml-2"
-              style={{ alignSelf: 'stretch', height: '42px' }}
-            >
-              <PlusIcon className="h-6 w-6" />
-            </button>
+            
+            {isProfessor && (
+              <button
+                title="Adicionar publicação"
+                onClick={handleAdd}
+                className="ml-4 p-2 cursor-pointer px-3 py-2 rounded text-primary-500 hover:text-primary-100 bg-transparent hover:bg-primary-600 disabled:opacity-50 flex items-center ml-2"
+                style={{ alignSelf: 'stretch', height: '42px' }}
+              >
+                <PlusIcon className="h-6 w-6" />
+              </button>
+            )}
           </div>
         </div>
         <ul>
@@ -235,23 +251,24 @@ export default function ListLayout({ title }: { title: string }) {
                         <Tag text={post.subject} />
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 ml-4">
-                      <button
-                        title="Editar"
-                        onClick={() => handleEdit(post)}
-                        className="p-2 rounded hover:bg-primary-100 dark:hover:bg-primary-900 hover:cursor-pointer"
-                      >
-                        <PencilIcon className="h-5 w-5 text-primary-500" />
-                      </button>
-                      <button
-                        title="Remover"
-                        // Chama a função corrigida que apenas seta o ID
-                        onClick={() => handleRemove(post.id)}
-                        className="p-2 rounded hover:bg-white-100 dark:hover:bg-red-900 hover:cursor-pointer"
-                      >
-                        <TrashIcon className="h-5 w-5 text-white-500" />
-                      </button>
-                    </div>
+                    {isProfessor && (
+                      <div className="flex items-center space-x-2 ml-4">
+                        <button
+                          title="Editar"
+                          onClick={() => handleEdit(post)}
+                          className="p-2 rounded hover:bg-primary-100 dark:hover:bg-primary-900 hover:cursor-pointer"
+                        >
+                          <PencilIcon className="h-5 w-5 text-primary-500" />
+                        </button>
+                        <button
+                          title="Remover"
+                          onClick={() => handleRemove(post.id)}
+                          className="p-2 rounded hover:bg-white-100 dark:hover:bg-red-900 hover:cursor-pointer"
+                        >
+                          <TrashIcon className="h-5 w-5 text-white-500" /> 
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="prose max-w-none text-gray-500 dark:text-gray-400">
                     {post.content}

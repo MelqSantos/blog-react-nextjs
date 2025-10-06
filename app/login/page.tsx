@@ -41,7 +41,7 @@ export default function Login() {
         localStorage.setItem('token', data.token)
       }
       // Redireciona para a home após sucesso
-      router.push('/')
+      router.push('/blog')
     } catch (err) {
       setError(err.message)
     } finally {

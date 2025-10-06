@@ -32,7 +32,7 @@ function Pagination({ totalPages, currentPage, onPageChange }: PaginationProps &
     <div className="space-y-2 pt-6 pb-8 md:space-y-5">
       <nav className="flex justify-between items-center">
         <button
-          className="cursor-pointer px-3 py-2 rounded bg-transparent hover:bg-primary-600 text-white disabled:opacity-50 flex items-center mr-2"
+          className="cursor-pointer px-3 py-2 rounded text-primary-500 hover:text-primary-100 bg-transparent hover:bg-primary-600 disabled:opacity-50 flex items-center mr-2"
           disabled={!prevPage}
           onClick={() => prevPage && onPageChange(currentPage - 1)}
         >
@@ -42,7 +42,7 @@ function Pagination({ totalPages, currentPage, onPageChange }: PaginationProps &
           {currentPage} of {totalPages}
         </span>
         <button
-          className="cursor-pointer px-3 py-2 rounded bg-transparent hover:bg-primary-600 text-white disabled:opacity-50 flex items-center ml-2"
+          className="cursor-pointer px-3 py-2 rounded text-primary-500 hover:text-primary-100 bg-transparent hover:bg-primary-600 disabled:opacity-50 flex items-center ml-2"
           disabled={!nextPage}
           onClick={() => nextPage && onPageChange(currentPage + 1)}
         >

@@ -11,7 +11,7 @@ O Blog Academy é uma plataforma de conteúdo focada em educação, construída 
 
 ## ✨ Funcionalidades Principais
 
-- **Postagens** Professores popderam criar, editar e exlcuir, alunos poderam visualizar e pesquisar.
+- **Postagens** Professores poderam criar, editar e exlcuir, alunos poderam visualizar e pesquisar.
 - **Design Responsivo:** Experiência de leitura otimizada para desktops, tablets e celulares.
 - **Tema Claro e Escuro:** Alterne entre os temas para uma leitura mais confortável.
 - **Performance Otimizada:** Geração de páginas estáticas com Next.js para carregamento rápido.

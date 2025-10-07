@@ -13,7 +13,6 @@ const Header = () => {
   const pathname = usePathname()
   const router = useRouter()
   const [hasToken, setHasToken] = useState(false)
-  router.push('/login')
 
   useEffect(() => {
     setHasToken(!!localStorage.getItem('token'))
